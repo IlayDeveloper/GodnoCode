@@ -23,7 +23,6 @@ public class SpaceBody : MonoBehaviour
     void FixedUpdate() 
     {
         RotateAbouSelfAxis();
-
         RotateAboutCenter();
     }
 
@@ -34,15 +33,22 @@ public class SpaceBody : MonoBehaviour
 
     private void RotateAboutCenter()
     {
-        radius = centerOfRotation.position - transform.position;
+        radius = transform.position - centerOfRotation.position;
         
         // Вектор угловой скорости вращения
-        Vector3 omega = Vector3.ProjectOnPlane(transform.up, radius).normalized * orbitRotationSpeed * Time.deltaTime;
-        // Линейная скорость
+        Vector3 omega = Vector3.ProjectOnPlane(transform.up, radius.normalized) * orbitRotationSpeed * Time.deltaTime;
+        // Вектор линейной скорости
         Vector3 linearVelocity = Vector3.Cross(radius, omega);
         // Конечное пермещение за 1 секунду
-        Vector3 offset = linearVelocity * Time.deltaTime;
+        Vector3 delta = linearVelocity * Time.deltaTime;
 
-        transform.position += offset;
+        // Новая позиция относительно центра вращения
+        Vector3  newPos = radius + delta;
+
+        // Ограничение длины вектора новой позиции на длину радиуса орбиты
+        newPos = Vector3.ClampMagnitude(newPos, radius.magnitude);
+
+        // Перенос вектора новой позиции в глобальную сист. координат
+        transform.position = centerOfRotation.TransformPoint(newPos);
     }
 }
