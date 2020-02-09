@@ -69,12 +69,12 @@ public class SpaceShip : MonoBehaviour
         // Rotate about Z axis
         if(Input.GetKey(KeyCode.A))
         {
-            rotationZSpeed += rotationAceleration * Time.deltaTime;
+            rotationZSpeed -= rotationAceleration * Time.deltaTime;
         }
 
         if(Input.GetKey(KeyCode.D))
         {
-            rotationZSpeed -= rotationAceleration * Time.deltaTime;
+            rotationZSpeed += rotationAceleration * Time.deltaTime;
         }
 
         // Вращение с учетом инерции
