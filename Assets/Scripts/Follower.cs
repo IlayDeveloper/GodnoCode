@@ -1,17 +1,24 @@
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
 public class Follower : MonoBehaviour
 {
-    public Transform target;
+    public SpaceShip spaceShip;
+    public Transform camera;
+    public float down;
+    public float up;
 
-    private Vector3 offset;
-
-    private void Start()
+    void Start()
     {
-        offset = transform.position - target.position;
+        camera.position = spaceShip.transform.position + spaceShip.transform.up * down;
     }
 
-    private void LateUpdate()
+    // Update is called once per frame
+    void Update()
     {
-        transform.position = target.position + offset;
+        float speed = spaceShip.rigidbody.velocity.magnitude;
+        float maxSpeed = spaceShip.maxSpeed;
+        camera.position = spaceShip.transform.position + spaceShip.transform.up * Mathf.Lerp(down, up, speed / maxSpeed);
     }
 }
