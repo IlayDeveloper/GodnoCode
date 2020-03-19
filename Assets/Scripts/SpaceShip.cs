@@ -1,24 +1,21 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SpaceShip : MonoBehaviour
 {
     // Linear movement
     public float maxSpeed;
     public float aceleration;
-    public float inertion;
+    public float friction;
     private float speed;
 
     // Rotation movement
     public float maxRotationSpeed;
     public float rotationAceleration;
-    public float rotationInertion;
+    public float rotationFrict;
     private float rotationXSpeed;
     private float rotationZSpeed;
-
-    void Start()
-    {
-        
-    }
+    private float rotationYSpeed;
 
     // Update is called once per frame
     void Update()
@@ -34,7 +31,7 @@ public class SpaceShip : MonoBehaviour
             speed += aceleration * Time.deltaTime;
         }
 
-        speed -= inertion * Time.deltaTime;
+        speed -= friction * Time.deltaTime;
         speed = Mathf.Clamp(speed, 0, maxSpeed);
 
         if(speed > 0)
@@ -56,14 +53,14 @@ public class SpaceShip : MonoBehaviour
             rotationXSpeed -= rotationAceleration * Time.deltaTime;
         } 
 
-        // Вращение с учетом инерции
+        // Вращение с учетом трения
         if(rotationXSpeed > 0)
         {
-            rotationXSpeed -= rotationInertion * Time.deltaTime;
+            rotationXSpeed -= rotationFrict * Time.deltaTime;
         }
         else if(rotationXSpeed < 0)
         {
-            rotationXSpeed += rotationInertion * Time.deltaTime;
+            rotationXSpeed += rotationFrict * Time.deltaTime;
         }
 
         // Rotate about Z axis
@@ -77,21 +74,22 @@ public class SpaceShip : MonoBehaviour
             rotationZSpeed += rotationAceleration * Time.deltaTime;
         }
 
-        // Вращение с учетом инерции
+        // Вращение с учетом трения
         if(rotationZSpeed > 0)
         {
-            rotationZSpeed -= rotationInertion * Time.deltaTime;
+            rotationZSpeed -= rotationFrict * Time.deltaTime;
         }
         else if(rotationZSpeed < 0)
         {
-            rotationZSpeed += rotationInertion * Time.deltaTime;
+            rotationZSpeed += rotationFrict * Time.deltaTime;
         }
 
         rotationXSpeed = Mathf.Clamp(rotationXSpeed, -maxRotationSpeed, maxRotationSpeed);
         rotationZSpeed = Mathf.Clamp(rotationZSpeed, -maxRotationSpeed, maxRotationSpeed); 
 
-        Quaternion rot = Quaternion.Euler(rotationXSpeed * Time.deltaTime, 0, rotationZSpeed * Time.deltaTime);
-
-        transform.localRotation *= rot;
+        // приращение значения перемещения(дельта)
+        Quaternion rot = Quaternion.Euler(rotationXSpeed * Time.deltaTime, rotationYSpeed * Time.deltaTime, rotationZSpeed * Time.deltaTime);
+        // изменяем значение премещения перемножив текущий кватернион и приращение
+        transform.localRotation = transform.localRotation * rot;
     }
 }
